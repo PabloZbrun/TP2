@@ -629,3 +629,108 @@ gini_asm.s: Aviso: final de fichero no está al final de una línea: se insertó
 GINI Argentina 2020: 42.7 -> 43
 (venv) cata@LinuxCata:~/tp2$ 
 
+
+
+STACK Y MEMORIA:
+
+Breakpoint 1, gini_mas_uno (valor=42.7000008) at gini.c:10
+10	    memcpy(&bits, &valor, sizeof(bits));
+(gdb) disassemble gini_mas_uno
+Dump of assembler code for function gini_mas_uno:
+   0x0000555555555190 <+0>:	push   %rbp
+   0x0000555555555191 <+1>:	mov    %rsp,%rbp
+   0x0000555555555194 <+4>:	sub    $0x20,%rsp
+   0x0000555555555198 <+8>:	movss  %xmm0,-0x14(%rbp)
+=> 0x000055555555519d <+13>:	mov    -0x14(%rbp),%eax
+   0x00005555555551a0 <+16>:	mov    %eax,-0x8(%rbp)
+   0x00005555555551a3 <+19>:	mov    -0x8(%rbp),%eax
+   0x00005555555551a6 <+22>:	sub    $0x8,%rsp
+   0x00005555555551aa <+26>:	push   %rax
+   0x00005555555551ab <+27>:	mov    $0x0,%r9d
+   0x00005555555551b1 <+33>:	mov    $0x0,%r8d
+   0x00005555555551b7 <+39>:	mov    $0x0,%ecx
+   0x00005555555551bc <+44>:	mov    $0x0,%edx
+   0x00005555555551c1 <+49>:	mov    $0x0,%esi
+   0x00005555555551c6 <+54>:	mov    $0x0,%edi
+   0x00005555555551cb <+59>:	call   0x5555555551dc <gini_asm>
+   0x00005555555551d0 <+64>:	add    $0x10,%rsp
+   0x00005555555551d4 <+68>:	mov    %eax,-0x4(%rbp)
+   0x00005555555551d7 <+71>:	mov    -0x4(%rbp),%eax
+   0x00005555555551da <+74>:	leave
+   0x00005555555551db <+75>:	ret
+End of assembler dump.
+(gdb) break *0x00005555555551cb
+quit
+Breakpoint 2 at 0x5555555551cb: file gini.c, line 11.
+(gdb) continue
+Continuing.
+
+Breakpoint 2, 0x00005555555551cb in gini_mas_uno (valor=42.7000008) at gini.c:11
+11	    resultado = gini_asm(0, 0, 0, 0, 0, 0, bits);
+(gdb) x/8xg $rsp
+0x7fffffffddf0:	0x00000000422acccd	0x0000000000000000
+0x7fffffffde00:	0x0000000000000000	0x422acccd00000000
+0x7fffffffde10:	0x0000000000000000	0x00000000422acccd
+0x7fffffffde20:	0x00007fffffffde40	0x000055555555515a
+(gdb) info registers rdi rsi rdx rcx r8 r9
+rdi            0x0                 0
+rsi            0x0                 0
+rdx            0x0                 0
+rcx            0x0                 0
+r8             0x0                 0
+r9             0x0                 0
+(gdb) break *gini_asm
+Breakpoint 3 at 0x5555555551dc: file gini_asm.s, line 5.
+(gdb) continue
+Continuing.
+
+Breakpoint 3, gini_asm () at gini_asm.s:5
+5	    pushq %rbp
+(gdb) x/8xg $rsp
+0x7fffffffdde8:	0x00005555555551d0	0x00000000422acccd
+0x7fffffffddf8:	0x0000000000000000	0x0000000000000000
+0x7fffffffde08:	0x422acccd00000000	0x0000000000000000
+0x7fffffffde18:	0x00000000422acccd	0x00007fffffffde40
+(gdb) info registers rsp rbp
+rsp            0x7fffffffdde8      0x7fffffffdde8
+rbp            0x7fffffffde20      0x7fffffffde20
+(gdb) stepi
+6	    movq  %rsp, %rbp
+(gdb) stepi
+7	    movss 0x10(%rbp), %xmm0      # 7mo argumento (el float) desde el stack
+(gdb) info registers rsp rbp
+rsp            0x7fffffffdde0      0x7fffffffdde0
+rbp            0x7fffffffdde0      0x7fffffffdde0
+(gdb) x/6xg $rbp
+0x7fffffffdde0:	0x00007fffffffde20	0x00005555555551d0
+0x7fffffffddf0:	0x00000000422acccd	0x0000000000000000
+0x7fffffffde00:	0x0000000000000000	0x422acccd00000000
+(gdb) stepi
+8	    cvttss2si %xmm0, %eax        # float -> int (trunca)
+(gdb) print $xmm0.v4_float
+$1 = {42.7000008, 0, 0, 0}
+(gdb) stepi
+9	    addl  $1, %eax               # +1
+(gdb) print $eax
+$2 = 42
+(gdb) stepi
+10	    popq  %rbp
+(gdb) print $eax
+$3 = 43
+(gdb) stepi
+11	    ret
+(gdb) stepi
+0x00005555555551d0 in gini_mas_uno (valor=42.7000008) at gini.c:11
+11	    resultado = gini_asm(0, 0, 0, 0, 0, 0, bits);
+(gdb) x/4xg $rsp
+0x7fffffffddf0:	0x00000000422acccd	0x0000000000000000
+0x7fffffffde00:	0x0000000000000000	0x422acccd00000000
+(gdb) print $eax
+$4 = 43
+(gdb) info registers rsp rbp
+rsp            0x7fffffffddf0      0x7fffffffddf0
+rbp            0x7fffffffde20      0x7fffffffde20
+(gdb) 
+
+
+
