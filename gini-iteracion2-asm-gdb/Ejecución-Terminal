@@ -53,7 +53,7 @@ El ensamblador también mostró este aviso:
 gini_asm.s: Aviso: final de fichero no está al final de una línea: se insertó línea nueva
 
 
-Es inofensivo. Se evita dejando una línea vacía al final del .s.
+Se evita dejando una línea vacía al final del .s.
 
 ## Prueba con C puro (sin Python)
 
@@ -65,6 +65,4 @@ gcc -g -O0 -o gini_test main_gdb.c gini.c gini_asm.o
 Salida esperada: gini_mas_uno(42.7) = 43
 (reemplazar por la salida real obtenida)
 
-## Demo en GDB
 
-Ver [sesion_gdb.md](sesion_gdb.md).
