@@ -37,6 +37,3 @@ bash
 gcc -g -O0 -o gini_test main_gdb.c gini.c gini_asm.o
 gdb ./gini_test
 
-
-El detalle de las capturas del stack (antes, al entrar, durante y después) está
-en [docs/sesion_gdb.md](docs/sesion_gdb.md).
