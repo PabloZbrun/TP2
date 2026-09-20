@@ -28,9 +28,6 @@ gcc -g -O0 -shared -fPIC -o libgini.so gini.c gini_asm.o
 python3 gini.py
 
 
-Importante: si se modifica gini_asm.s, volver a correr as antes de compilar.
-Si no, se linkea un gini_asm.o viejo y el resultado es basura.
-
 ## Demo en GDB (C puro)
 
 bash
