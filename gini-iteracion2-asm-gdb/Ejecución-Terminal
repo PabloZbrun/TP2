@@ -1,1 +1,70 @@
+## Entorno
 
+- Linux (Debian 13 "trixie" / LMDE), arquitectura x86_64
+- Python 3.13.5, gcc y as (build-essential), gdb
+
+## Dependencias
+
+bash
+sudo apt update
+sudo apt install build-essential python3-pip python3-venv gdb
+python3 -m venv venv
+source venv/bin/activate
+pip install requests
+
+
+Para la demo en GDB se puede usar además GDB Dashboard o layout regs.
+
+## Compilación y ejecución (Python + C + ASM)
+
+bash
+as --64 -g -o gini_asm.o gini_asm.s
+gcc -g -O0 -shared -fPIC -o libgini.so gini.c gini_asm.o
+python3 gini.py
+
+
+Salida:
+
+
+GINI Argentina 2020: 42.7 -> 43
+
+
+Mismo resultado que la iteración 1, ahora calculado por la rutina en ASM.
+
+## Problemas encontrados
+
+Las primeras compilaciones dieron resultados incorrectos:
+
+
+GINI Argentina 2020: 42.7 -> -1214557792
+GINI Argentina 2020: 42.7 -> 4202848
+
+
+Son valores basura (restos en %eax), no un error de la cuenta. Según nuestras
+notas, el gini_asm.s estaba incompleto en ese momento. Se completó,
+se volvió a ensamblar con as y se recompiló la librería, y ahí dio 43.
+
+Regla práctica: **cada vez que se modifica gini_asm.s, correr as de nuevo
+antes de gcc**, para no linkear un .o viejo.
+
+El ensamblador también mostró este aviso:
+
+
+gini_asm.s: Aviso: final de fichero no está al final de una línea: se insertó línea nueva
+
+
+Es inofensivo. Se evita dejando una línea vacía al final del .s.
+
+## Prueba con C puro (sin Python)
+
+bash
+gcc -g -O0 -o gini_test main_gdb.c gini.c gini_asm.o
+./gini_test
+
+
+Salida esperada: gini_mas_uno(42.7) = 43
+(reemplazar por la salida real obtenida)
+
+## Demo en GDB
+
+Ver [sesion_gdb.md](sesion_gdb.md).
