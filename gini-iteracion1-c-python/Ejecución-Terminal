@@ -1,0 +1,37 @@
+# Pruebas de la iteración 1
+
+## Entorno
+
+- Linux (Debian 13 "trixie" / LMDE), arquitectura x86_64
+- Python 3.13.5, gcc (build-essential), gdb
+
+## Instalación de dependencias
+
+bash
+sudo apt update
+sudo apt install build-essential python3-pip python3-venv gdb
+mkdir tp2
+cd tp2
+python3 -m venv venv
+source venv/bin/activate
+pip install requests
+
+
+## Compilación y ejecución
+
+bash
+gcc -g -O0 -shared -fPIC -o libgini.so gini.c
+python3 gini.py
+
+
+Salida:
+
+
+GINI Argentina 2020: 42.7 -> 43
+
+
+## Verificación
+
+- El dato de la API es 42.7 (último año con valor no nulo: 2020).
+- gini_mas_uno(42.7): (int)42.7 trunca a 42, más 1 da 43.
+- Resultado obtenido: 43, coincide con lo esperado.
